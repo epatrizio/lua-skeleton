@@ -23,7 +23,7 @@ build = {
 	{
 		factorial = "src/factorial.lua"
 	},
-	copy_directories = { "test" }
+	copy_directories = { "doc", "test" }
 }
 test = {
    type = "command",
