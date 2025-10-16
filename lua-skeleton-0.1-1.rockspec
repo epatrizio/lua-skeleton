@@ -27,9 +27,11 @@ build = {
 }
 test = {
    type = "command",
-   script = "test/test_factorial.lua",
+   -- script = "test/test_factorial.lua",	-- luaunit
+   script = "spec/factorial_spec.lua",		-- busted
 }
 test_dependencies = {
    "lua >= 5.1, < 5.5",
    "luaunit >= 3.4",
+   "busted >= 2.2",
 }

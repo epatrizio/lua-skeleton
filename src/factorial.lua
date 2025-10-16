@@ -4,6 +4,8 @@ Minimal factorial module
 
 local factorial = {}
 
+factorial._VERSION = "1.0"
+
 -- 1: Basic imperative version
 function factorial.fact_imp(n)
   assert(n >= 0, "number must be positive")
