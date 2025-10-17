@@ -21,7 +21,8 @@ build = {
    type = "builtin",
    modules =
 	{
-		factorial = "src/factorial.lua"
+		factorial = "src/factorial.lua",
+		factorial_c = "src/factorial.c",
 	},
 	copy_directories = { "doc", "test" }
 }
