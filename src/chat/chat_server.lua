@@ -1,13 +1,10 @@
 local socket = require("socket")
 local chat_client = require("src/chat/chat_client")
+local chat_info = require("src/chat/chat_info")
 
 local chat_server = {}
 
 chat_server.connections = {}
-
-function chat_server.info()
-    return "chat_server.info(): to be implemented!\n"
-end
 
 function chat_server.start()
     -- create and bind a TCP socket
@@ -16,22 +13,18 @@ function chat_server.start()
     table.insert(chat_server.connections, server)
 
     local ip, port = server:getsockname()
-    print("chat server up! telnet listening to " .. ip .. ":" .. port)
+    print(chat_info.server_start(ip, port))
 
     return server
 end
 
 function chat_server.user_connection()
-    print("user connection")
-
     local server = chat_server.connections[1] -- hard-coded: cf. chat_server.start():table.insert server
     local client = server:accept()
-    client:settimeout(nil)
-    client:setoption("keepalive", true)
+
+    chat_client.login(client)
 
     table.insert(chat_server.connections, client)
-
-    client:send(chat_server.info())
 end
 
 function chat_server.user_input(client)
