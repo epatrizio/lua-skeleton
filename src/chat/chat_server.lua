@@ -5,6 +5,7 @@ local chat_info = require("src/chat/chat_info")
 local chat_server = {}
 
 chat_server.connections = {}
+chat_server.users = {}
 
 function chat_server.start()
     -- create and bind a TCP socket
@@ -21,20 +22,22 @@ end
 function chat_server.user_connection()
     local server = chat_server.connections[1] -- hard-coded: cf. chat_server.start():table.insert server
     local client = server:accept()
-
-    chat_client.login(client)
-
-    table.insert(chat_server.connections, client)
+    local user, error = chat_client.login(client)
+    if not error then
+        table.insert(chat_server.connections, client)
+        chat_server.users[client] = user
+    else
+        print("error:" .. error)
+    end
 end
 
 function chat_server.user_input(client)
-    print("user input")
-
-    local msg, err = client:receive()
-    if not err then
-        chat_client.dispatch_action(client, msg)
+    local msg, error = client:receive()
+    if not error then
+        local user = chat_server.users[client]
+        chat_client.dispatch_action(user, msg)
     else
-        print("error:" .. err)
+        print("error:" .. error)
     end
 end
 
