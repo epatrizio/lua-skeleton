@@ -34,7 +34,7 @@ end
 function chat_server.user_logout(user)
     -- clean connections
     for i, conn in ipairs(chat_server.connections) do
-        if conn == user.client  then
+        if conn == user.client then
             table.remove(chat_server.connections, i)
             break
         end
@@ -52,6 +52,14 @@ function chat_server.users_list(user)
     user.client:send("\n")
 end
 
+function chat_server.send_msg_all(user, msg)
+    for i, conn in ipairs(chat_server.connections) do
+        if i > 1 and conn ~= user.client then -- i>1: hard-coded: cf. chat_server.start():table.insert server
+            chat_client.send_msg(user, chat_server.users[conn], msg)
+        end
+    end
+end
+
 function chat_server.dispatch_action(user, msg)
     local function starts_with(str, start)
         return string.sub(str, 1, #start) == start
@@ -61,13 +69,15 @@ function chat_server.dispatch_action(user, msg)
         chat_server.user_logout(user)
     elseif starts_with(msg, "/help") then
         chat_client.help(user)
-        user.client:send(chat_info.user_prompt(user.username))
     elseif starts_with(msg, "/users") then
         chat_server.users_list(user)
         user.client:send(chat_info.user_prompt(user.username))
+    elseif starts_with(msg, "/msg_all") then
+        local msg = string.sub(msg, 9)
+        chat_server.send_msg_all(user, msg)
+        user.client:send(chat_info.user_prompt(user.username))
     else
-        -- default, tmp: return received msg to the client
-        user.client:send("received msg:" .. msg .. "\n")
+        user.client:send(chat_info.invalid_command(msg))
         user.client:send(chat_info.user_prompt(user.username))
     end
 end

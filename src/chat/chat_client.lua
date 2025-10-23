@@ -5,6 +5,7 @@ local chat_client = {}
 function chat_client.help(user)
     print("user help " .. user.username)
     user.client:send(chat_info.help())
+    user.client:send(chat_info.user_prompt(user.username))
 end
 
 function chat_client.login(client)
@@ -26,6 +27,12 @@ function chat_client.login(client)
         client:close()
         return nil, err_msg
     end
+end
+
+function chat_client.send_msg(user_from, user_to, msg)
+    print("send msg from " .. user_from.username .. " to " .. user_to.username)
+    user_to.client:send("msg from *" .. user_from.username .. "*:" .. msg .. "\n")
+    user_to.client:send(chat_info.user_prompt(user_to.username))
 end
 
 function chat_client.logout(user)

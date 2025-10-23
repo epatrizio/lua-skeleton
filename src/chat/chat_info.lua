@@ -13,6 +13,7 @@ function chat_info.help()
         "tiny chat server commands:\n" ..
         " - /help\n" ..
         " - /users : connected users list\n" ..
+        " - /msg_all : send a message to all connected users\n" ..
         " - /logout\n"
     return help
 end
@@ -27,6 +28,10 @@ end
 
 function chat_info.user_prompt(username)
     return "$ " .. username .. " > "
+end
+
+function chat_info.invalid_command(msg)
+    return "invalid command! received message:" .. msg .. "\n"
 end
 
 function chat_info.user_logout(username)
