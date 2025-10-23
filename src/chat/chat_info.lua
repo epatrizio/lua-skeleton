@@ -11,8 +11,9 @@ end
 function chat_info.help()
     local help =
         "tiny chat server commands:\n" ..
-        "- /help\n" ..
-        "- /logout\n"
+        " - /help\n" ..
+        " - /users : connected users list\n" ..
+        " - /logout\n"
     return help
 end
 
