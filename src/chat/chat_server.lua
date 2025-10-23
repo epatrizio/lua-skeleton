@@ -7,9 +7,9 @@ local chat_server = {}
 chat_server.connections = {}
 chat_server.users = {}
 
-function chat_server.start()
+function chat_server.start(address, port)
     -- create and bind a TCP socket
-    local server = assert(socket.bind("*", 1234))
+    local server = assert(socket.bind(address, port))
 
     table.insert(chat_server.connections, server)
 

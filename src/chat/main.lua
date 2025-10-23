@@ -2,7 +2,14 @@ local socket = require("socket")
 local chat_server = require("src/chat/chat_server")
 local chat_info = require("src/chat/chat_info")
 
-local server = chat_server.start()
+local address = "localhost"
+local port = 1234
+
+-- command line args
+if arg[1] then address = arg[1] end
+if arg[2] then arg = arg[2] end
+
+local server = chat_server.start(address, port)
 
 -- chat server loop
 while true do
