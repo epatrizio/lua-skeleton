@@ -11,6 +11,7 @@ description = {
 		A Lua language skeleton: ...
 	]],
 	homepage = "https://github.com/epatrizio/lua-skeleton",
+	issues_url = "https://github.com/epatrizio/lua-skeleton/issues",
 	license = "The Unlicense",
 	maintainer = "Eric Patrizio <epatrizio at mpns dot fr>",
 }
@@ -24,8 +25,17 @@ build = {
 	{
 		factorial = "src/factorial.lua",
 		factorial_c = "src/factorial.c",
+		["chat.client"] = "src/chat/client.lua",
+		["chat.messages"] = "src/chat/messages.lua",
+		["chat.server"] = "src/chat/server.lua",
+		["chat.user"] = "src/chat/user.lua"
 	},
-	copy_directories = { "doc", "test" }
+	copy_directories = { "doc", "spec", "test" },
+	install = {
+        bin = {
+            chat_app = "src/chat/app.lua"
+        }
+    },
 }
 test = {
    type = "command",
