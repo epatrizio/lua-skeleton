@@ -52,6 +52,15 @@ function chat_server.users_list(user)
     user.client:send("\n")
 end
 
+function chat_server.user_from_username(username)
+    for _, user in pairs(chat_server.users) do
+        if user.username == username then
+            return user
+        end
+    end
+    return nil, chat_info.invalid_username(username)
+end
+
 function chat_server.send_msg_all(user, msg)
     for i, conn in ipairs(chat_server.connections) do
         if i > 1 and conn ~= user.client then -- i>1: hard-coded: cf. chat_server.start():table.insert server
@@ -73,9 +82,22 @@ function chat_server.dispatch_action(user, msg)
         chat_server.users_list(user)
         user.client:send(chat_info.user_prompt(user.username))
     elseif starts_with(msg, "/msg_all") then
-        local msg = string.sub(msg, 9)
+        local msg = string.sub(msg, 10)
         chat_server.send_msg_all(user, msg)
         user.client:send(chat_info.user_prompt(user.username))
+    elseif starts_with(msg, "/msg") then
+        local msg = string.sub(msg, 5)
+        -- pattern: /msg_*username*_"msg"
+        for username, msg in string.gmatch(msg, '*(.+)* "(.+)"') do
+            local user_to, error = chat_server.user_from_username(username)
+            if not error then
+                chat_client.send_msg(user, user_to, msg)
+            else
+                user.client:send(chat_info.invalid_username(username))
+            end
+            user.client:send(chat_info.user_prompt(user.username))
+            break
+        end
     else
         user.client:send(chat_info.invalid_command(msg))
         user.client:send(chat_info.user_prompt(user.username))

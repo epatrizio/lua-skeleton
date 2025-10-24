@@ -14,6 +14,7 @@ function chat_info.help()
         " - /help\n" ..
         " - /users : connected users list\n" ..
         " - /msg_all : send a message to all connected users\n" ..
+        " - /msg *user* : send a message to a user. ex. /msg *username* \"message\" \n" ..
         " - /logout\n"
     return help
 end
@@ -27,7 +28,11 @@ function chat_info.user_welcome(username)
 end
 
 function chat_info.user_prompt(username)
-    return "$ " .. username .. " > "
+    return "$ " .. username .. " # "
+end
+
+function chat_info.invalid_username(username)
+    return "unknown username *" .. username .. "*\n"
 end
 
 function chat_info.invalid_command(msg)
