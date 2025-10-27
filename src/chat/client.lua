@@ -18,7 +18,7 @@ function client.login(tcp_client)
         tcp_client:send(messages.user_welcome(username))
         tcp_client:send(messages.help())
         tcp_client:send(messages.user_prompt(username))
-        local user = require("src/chat/user")
+        local user = require("chat.user")
         return user.new(username, tcp_client)
     else
         local err_msg = "user login error:" .. err
