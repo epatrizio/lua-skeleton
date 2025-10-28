@@ -1,6 +1,6 @@
-local lu = require('luaunit')
+local lu = require("luaunit")
 
-local factorial = require('factorial')
+local factorial = require("factorial")
 
 function testFactImp()
     lu.assertEquals(factorial.fact_imp(0), 1)

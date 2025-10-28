@@ -2,7 +2,7 @@ rockspec_format = "3.0"
 package = "lua-skeleton"
 version = "0.1-1"
 source = {
-   url = "https://github.com/epatrizio/lua-skeleton.git"
+    url = "https://github.com/epatrizio/lua-skeleton.git"
 }
 description = {
 	summary = "A Lua skeleton",
@@ -16,12 +16,12 @@ description = {
 	maintainer = "Eric Patrizio <epatrizio at mpns dot fr>",
 }
 dependencies = {
-   "lua >= 5.1, < 5.5",
-   "luasocket >= 3.1",
+    "lua >= 5.1, < 5.5",
+    "luasocket >= 3.1",
 }
 build = {
-   type = "builtin",
-   modules =
+    type = "builtin",
+    modules =
 	{
 		factorial = "src/factorial.lua",
 		factorial_c = "src/factorial.c",
@@ -38,12 +38,13 @@ build = {
     },
 }
 test = {
-   type = "command",
-   -- script = "test/test_factorial.lua",	-- luaunit
-   script = "spec/factorial_spec.lua",		-- busted
+    type = "command",
+    command = "./test.sh",					-- .sh file: test suite calls
+    -- script = "test/test_factorial.lua",	-- luaunit
+    -- script = "spec/factorial_spec.lua",	-- busted
 }
 test_dependencies = {
-   "lua >= 5.1, < 5.5",
-   "luaunit >= 3.4",
-   "busted >= 2.2",
+    "lua >= 5.1, < 5.5",
+    "luaunit >= 3.4",
+    "busted >= 2.2",
 }
