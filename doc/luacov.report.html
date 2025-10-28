@@ -316,18 +316,298 @@
 </head>
 <body onload="initialize()">
    <main>
-      <div class="file success-high total">
+      <div class="file danger total">
          <h1 class="title">
             Code coverage report
             <span class="stats">
                <span class="cov">
-                  <span class="bg" style="width: 100.0%"></span>
-                  <span><strong>100.0%</strong> Coverage</span>
+                  <span class="bg" style="width: 34.75%"></span>
+                  <span><strong>34.75%</strong> Coverage</span>
                </span>
-               <span class="hits"><strong>14</strong> Hits</span>
-               <span class="miss"><strong>0</strong> Missed</span>
+               <span class="hits"><strong>49</strong> Hits</span>
+               <span class="miss"><strong>92</strong> Missed</span>
             </span>
          </h1>
+      </div>
+
+      <div class="hidden file danger" id="src-chat-client">
+         <h2 class="title">
+            src/chat/client.lua
+            <span class="stats">
+               <span class="cov">
+                  <span class="bg" style="width: 25.00%"></span>
+                  <span><strong>25.00%</strong> Coverage</span>
+               </span>
+               <span class="hits"><strong>8</strong> Hits</span>
+               <span class="miss"><strong>24</strong> Missed</span>
+            </span>
+         </h2>
+         <pre class="prettyprint lang-lua linenums"><span class="fc" data-hits="3">local messages = require(&quot;chat.messages&quot;)</span>
+
+<span class="fc" data-hits="3">local client = {}</span>
+
+<span class="fc" data-hits="3">function client.help(user)</span>
+<span class="nc">    print(&quot;user help &quot; .. user.username)</span>
+<span class="nc">    user.tcp_client:send(messages.help())</span>
+<span class="nc">    user.tcp_client:send(messages.user_prompt(user.username))</span>
+end
+
+<span class="fc" data-hits="3">function client.login(tcp_client)</span>
+<span class="nc">    tcp_client:send(messages.user_login())</span>
+<span class="nc">    local username, err = tcp_client:receive()</span>
+<span class="nc">    if not err then</span>
+<span class="nc">        print(&quot;user login &quot; .. username)</span>
+<span class="nc">        tcp_client:settimeout(nil)</span>
+<span class="nc">        tcp_client:setoption(&quot;keepalive&quot;, true)</span>
+<span class="nc">        tcp_client:send(messages.user_welcome(username))</span>
+<span class="nc">        tcp_client:send(messages.help())</span>
+<span class="nc">        tcp_client:send(messages.user_prompt(username))</span>
+<span class="nc">        local user = require(&quot;chat.user&quot;)</span>
+<span class="nc">        return user.new(username, tcp_client)</span>
+    else
+<span class="nc">        local err_msg = &quot;user login error:&quot; .. err</span>
+<span class="nc">        print(err_msg)</span>
+<span class="nc">        tcp_client:send(err_msg .. &quot;\n&quot;)</span>
+<span class="nc">        tcp_client:close()</span>
+<span class="nc">        return nil, err_msg</span>
+    end
+end
+
+<span class="fc" data-hits="3">function client.send_msg(user_from, user_to, msg)</span>
+<span class="nc">    print(&quot;send msg from &quot; .. user_from.username .. &quot; to &quot; .. user_to.username)</span>
+<span class="nc">    user_to.tcp_client:send(&quot;msg from *&quot; .. user_from.username .. &quot;*: &quot; .. msg .. &quot;\n&quot;)</span>
+<span class="nc">    user_to.tcp_client:send(messages.user_prompt(user_to.username))</span>
+end
+
+<span class="fc" data-hits="3">function client.logout(user)</span>
+<span class="fc" data-hits="1">    print(&quot;user logout &quot; .. user.username)</span>
+<span class="nc">    user.tcp_client:send(messages.user_logout(user.username))</span>
+<span class="nc">    user.tcp_client:close()</span>
+end
+
+<span class="fc" data-hits="3">return client</span>
+</pre>
+      </div>
+
+      <div class="hidden file warning" id="src-chat-messages">
+         <h2 class="title">
+            src/chat/messages.lua
+            <span class="stats">
+               <span class="cov">
+                  <span class="bg" style="width: 52.00%"></span>
+                  <span><strong>52.00%</strong> Coverage</span>
+               </span>
+               <span class="hits"><strong>13</strong> Hits</span>
+               <span class="miss"><strong>12</strong> Missed</span>
+            </span>
+         </h2>
+         <pre class="prettyprint lang-lua linenums"><span class="fc" data-hits="6">local messages = {}</span>
+
+<span class="fc" data-hits="6">function messages.server_start(ip, port)</span>
+<span class="nc">    return &quot;chat server up! telnet listening to &quot; .. ip .. &quot;:&quot; .. port</span>
+end
+
+<span class="fc" data-hits="6">function messages.server_loop_error(msg)</span>
+<span class="nc">    return &quot;chat server down! error:&quot; .. msg</span>
+end
+
+<span class="fc" data-hits="6">function messages.help()</span>
+    local help =
+<span class="nc">        &quot;tiny chat server commands:\n&quot; ..</span>
+<span class="nc">        &quot; - &#47;help\n&quot; ..</span>
+<span class="nc">        &quot; - &#47;users : connected users list\n&quot; ..</span>
+<span class="nc">        &quot; - &#47;msg_all : send a message to all connected users\n&quot; ..</span>
+<span class="nc">        &quot; - &#47;msg *user* : send a message to a user. ex. &#47;msg *username* \&quot;message\&quot; \n&quot; ..</span>
+        &quot; - &#47;logout\n&quot;
+<span class="nc">    return help</span>
+end
+
+<span class="fc" data-hits="6">function messages.user_login()</span>
+<span class="fc" data-hits="1">    return &quot;Hello! Please, enter your username: &quot;</span>
+end
+
+<span class="fc" data-hits="6">function messages.user_welcome(username)</span>
+<span class="nc">    return &quot;Welcome, &quot; .. username .. &quot; ;)\n&quot;</span>
+end
+
+<span class="fc" data-hits="6">function messages.user_prompt(username)</span>
+<span class="fc" data-hits="6">    return &quot;$ &quot; .. username .. &quot; # &quot;</span>
+end
+
+<span class="fc" data-hits="6">function messages.invalid_username(username)</span>
+<span class="nc">    return &quot;unknown username *&quot; .. username .. &quot;*\n&quot;</span>
+end
+
+<span class="fc" data-hits="6">function messages.invalid_command(msg)</span>
+<span class="nc">    return &quot;invalid command! received message:&quot; .. msg .. &quot;\n&quot;</span>
+end
+
+<span class="fc" data-hits="6">function messages.user_logout(username)</span>
+<span class="nc">    return &quot;Goodbye &quot; .. username .. &quot; and see you soon ;)\n&quot;</span>
+end
+
+<span class="fc" data-hits="6">return messages</span>
+</pre>
+      </div>
+
+      <div class="hidden file danger" id="src-chat-server">
+         <h2 class="title">
+            src/chat/server.lua
+            <span class="stats">
+               <span class="cov">
+                  <span class="bg" style="width: 15.15%"></span>
+                  <span><strong>15.15%</strong> Coverage</span>
+               </span>
+               <span class="hits"><strong>10</strong> Hits</span>
+               <span class="miss"><strong>56</strong> Missed</span>
+            </span>
+         </h2>
+         <pre class="prettyprint lang-lua linenums"><span class="fc" data-hits="3">local socket = require(&quot;socket&quot;)</span>
+
+<span class="fc" data-hits="3">local client = require(&quot;chat.client&quot;)</span>
+<span class="fc" data-hits="3">local messages = require(&quot;chat.messages&quot;)</span>
+
+<span class="fc" data-hits="3">local server = {}</span>
+<span class="fc" data-hits="3">server.connections = {}</span>
+
+<span class="fc" data-hits="3">local users = {}</span>
+
+<span class="fc" data-hits="3">function server.start(address, port)</span>
+    -- create and bind a TCP socket
+<span class="nc">    local tcp_server = assert(socket.bind(address, port))</span>
+
+<span class="nc">    table.insert(server.connections, tcp_server)</span>
+
+<span class="nc">    local ip, port = tcp_server:getsockname()</span>
+<span class="nc">    print(messages.server_start(ip, port))</span>
+
+<span class="nc">    return tcp_server</span>
+end
+
+<span class="fc" data-hits="3">function server.user_connection()</span>
+<span class="nc">    local tcp_server = server.connections[1] -- hard-coded: cf. chat_server.start():table.insert server</span>
+<span class="nc">    local tcp_client = tcp_server:accept()</span>
+<span class="nc">    local user, error = client.login(tcp_client)</span>
+<span class="nc">    if not error then</span>
+<span class="nc">        table.insert(server.connections, tcp_client)</span>
+<span class="nc">        users[tcp_client] = user</span>
+    else
+<span class="nc">        print(&quot;error:&quot; .. error)</span>
+    end
+end
+
+local function user_logout(user)
+    -- clean connections
+<span class="nc">    for i, conn in ipairs(server.connections) do</span>
+<span class="nc">        if conn == user.tcp_client then</span>
+<span class="nc">            table.remove(server.connections, i)</span>
+            break
+        end
+    end
+    -- clean users
+<span class="nc">    users[user.tcp_client] = nil</span>
+end
+
+local function users_list(user)
+<span class="nc">    print(&quot;connected users list request &quot; .. user.username)</span>
+<span class="nc">    user.tcp_client:send(&quot;connected users list: &quot;)</span>
+<span class="nc">    for _, u in pairs(users) do</span>
+<span class="nc">        user.tcp_client:send(&quot;*&quot; .. u.username .. &quot;* &quot;)</span>
+    end
+<span class="nc">    user.tcp_client:send(&quot;\n&quot;)</span>
+end
+
+local function user_from_username(username)
+<span class="nc">    for _, user in pairs(users) do</span>
+<span class="nc">        if user.username == username then</span>
+<span class="nc">            return user</span>
+        end
+    end
+<span class="nc">    return nil, messages.invalid_username(username)</span>
+end
+
+local function send_msg_all(user, msg)
+<span class="nc">    for i, conn in ipairs(server.connections) do</span>
+<span class="nc">        if i &gt; 1 and conn ~= user.tcp_client then -- i&gt;1: hard-coded: cf. chat_server.start():table.insert server</span>
+<span class="nc">            client.send_msg(user, users[conn], msg)</span>
+        end
+    end
+end
+
+local function dispatch_action(user, msg)
+    local function starts_with(str, start)
+<span class="nc">        return string.sub(str, 1, #start) == start</span>
+    end
+<span class="nc">    if starts_with(msg, &quot;&#47;logout&quot;) then</span>
+<span class="nc">        client.logout(user)</span>
+<span class="nc">        user_logout(user)</span>
+<span class="nc">    elseif starts_with(msg, &quot;&#47;help&quot;) then</span>
+<span class="nc">        client.help(user)</span>
+<span class="nc">    elseif starts_with(msg, &quot;&#47;users&quot;) then</span>
+<span class="nc">        users_list(user)</span>
+<span class="nc">        user.tcp_client:send(messages.user_prompt(user.username))</span>
+<span class="nc">    elseif starts_with(msg, &quot;&#47;msg_all&quot;) then</span>
+<span class="nc">        local msg = string.sub(msg, 10)</span>
+<span class="nc">        send_msg_all(user, msg)</span>
+<span class="nc">        user.tcp_client:send(messages.user_prompt(user.username))</span>
+<span class="nc">    elseif starts_with(msg, &quot;&#47;msg&quot;) then</span>
+<span class="nc">        local msg = string.sub(msg, 5)</span>
+        -- pattern: &#47;msg_*username*_&quot;msg&quot;
+<span class="nc">        for username, msg in string.gmatch(msg, &#39;*(.+)* &quot;(.+)&quot;&#39;) do</span>
+<span class="nc">            local user_to, error = user_from_username(username)</span>
+<span class="nc">            if not error then</span>
+<span class="nc">                client.send_msg(user, user_to, msg)</span>
+            else
+<span class="nc">                user.tcp_client:send(messages.invalid_username(username))</span>
+            end
+<span class="nc">            user.tcp_client:send(messages.user_prompt(user.username))</span>
+            break
+        end
+    else
+<span class="nc">        user.tcp_client:send(messages.invalid_command(msg))</span>
+<span class="nc">        user.tcp_client:send(messages.user_prompt(user.username))</span>
+    end
+end
+
+<span class="fc" data-hits="3">function server.user_input(tcp_client)</span>
+<span class="nc">    local msg, error = tcp_client:receive()</span>
+<span class="nc">    if not error then</span>
+<span class="nc">        local user = users[tcp_client]</span>
+<span class="nc">        dispatch_action(user, msg)</span>
+    else
+<span class="nc">        print(&quot;error:&quot; .. error)</span>
+    end
+end
+
+<span class="fc" data-hits="3">return server</span>
+</pre>
+      </div>
+
+      <div class="hidden file success-high" id="src-chat-user">
+         <h2 class="title">
+            src/chat/user.lua
+            <span class="stats">
+               <span class="cov">
+                  <span class="bg" style="width: 100.00%"></span>
+                  <span><strong>100.00%</strong> Coverage</span>
+               </span>
+               <span class="hits"><strong>4</strong> Hits</span>
+               <span class="miss"><strong>0</strong> Missed</span>
+            </span>
+         </h2>
+         <pre class="prettyprint lang-lua linenums"><span class="fc" data-hits="17">local user = {}</span>
+
+---Create a user record { username: string, tcp_client: socket.client }
+---@alias socket.client socket.client: luasocket rock import
+---@param username string
+---@param tcp_client socket.client
+---@return table: user table record { username: string, tcp_client: socket.client }
+<span class="fc" data-hits="17">function user.new(username, tcp_client)</span>
+<span class="fc" data-hits="13">    return { username = username, tcp_client = tcp_client }</span>
+end
+
+<span class="fc" data-hits="17">return user</span>
+</pre>
       </div>
 
       <div class="hidden file success-high" id="src-factorial">
@@ -346,37 +626,37 @@
 Minimal factorial module
 --]]
 
-<span class="fc" data-hits="9">local factorial = {}</span>
+<span class="fc" data-hits="30">local factorial = {}</span>
 
-<span class="fc" data-hits="9">factorial._VERSION = &quot;1.0&quot;</span>
+<span class="fc" data-hits="30">factorial._VERSION = &quot;1.0&quot;</span>
 
 -- 1: Basic imperative version
-<span class="fc" data-hits="9">function factorial.fact_imp(n)</span>
-<span class="fc" data-hits="57">    assert(n &gt;= 0, &quot;number must be positive&quot;)</span>
-<span class="fc" data-hits="48">    local f = 1</span>
-<span class="fc" data-hits="496">    for i = 1, n do</span>
-<span class="fc" data-hits="448">        f = f * i</span>
+<span class="fc" data-hits="30">function factorial.fact_imp(n)</span>
+<span class="fc" data-hits="204">    assert(n &gt;= 0, &quot;number must be positive&quot;)</span>
+<span class="fc" data-hits="174">    local f = 1</span>
+<span class="fc" data-hits="1798">    for i = 1, n do</span>
+<span class="fc" data-hits="1624">        f = f * i</span>
     end
-<span class="fc" data-hits="48">    return f</span>
+<span class="fc" data-hits="174">    return f</span>
 end
 
 -- 2: Standard recursive version
-<span class="fc" data-hits="9">function factorial.fact_rec(n)</span>
-<span class="fc" data-hits="505">    assert(n &gt;= 0, &quot;number must be positive&quot;)</span>
-<span class="fc" data-hits="496">    if n &lt;= 0 then</span>
-<span class="fc" data-hits="48">        return 1</span>
+<span class="fc" data-hits="30">function factorial.fact_rec(n)</span>
+<span class="fc" data-hits="1828">    assert(n &gt;= 0, &quot;number must be positive&quot;)</span>
+<span class="fc" data-hits="1798">    if n &lt;= 0 then</span>
+<span class="fc" data-hits="174">        return 1</span>
     else
-<span class="fc" data-hits="448">        return n * factorial.fact_rec(n - 1)</span>
+<span class="fc" data-hits="1624">        return n * factorial.fact_rec(n - 1)</span>
     end
 end
 
-<span class="fc" data-hits="9">return factorial</span>
+<span class="fc" data-hits="30">return factorial</span>
 </pre>
       </div>
 
    </main>
    <footer>
-        Code coverage generated by <a href="https://lunarmodules.github.io/luacov/" target="_blank">LuaCov</a> at 2025-10-28 16:36:26
+        Code coverage generated by <a href="https://lunarmodules.github.io/luacov/" target="_blank">LuaCov</a> at 2025-10-28 17:38:13
    </footer>
 
    <script type="text/javascript">

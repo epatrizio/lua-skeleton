@@ -1,5 +1,9 @@
 modules = {
     ["factorial"] = "src/factorial.lua",
+    ["chat.client"] = "src/chat/client.lua",
+    ["chat.messages"] = "src/chat/messages.lua",
+    ["chat.server"] = "src/chat/server.lua",
+    ["chat.user"] = "src/chat/user.lua",
 }
 reporter = "html"
 reportfile = "doc/luacov.report.html"
