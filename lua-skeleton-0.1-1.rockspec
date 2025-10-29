@@ -25,6 +25,7 @@ build = {
 	{
 		factorial = "src/factorial.lua",
 		factorial_c = "src/factorial.c",
+		linked_list = "src/linked_list.c",
 		["chat.client"] = "src/chat/client.lua",
 		["chat.messages"] = "src/chat/messages.lua",
 		["chat.server"] = "src/chat/server.lua",

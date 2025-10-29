@@ -1,0 +1,16 @@
+require "busted.runner" ()
+
+local linked_list = require("linked_list")
+
+describe("linked_list tests with busted framework", function ()
+    it("create :: push :: size", function ()
+        local ll = linked_list.create()
+        assert.are.equal(linked_list.size(ll), 0)
+        ll = linked_list.push(84, ll)
+        assert.are.equal(linked_list.size(ll), 1)
+        ll = linked_list.push(42, ll)
+        assert.are.equal(linked_list.size(ll), 2)
+        ll = linked_list.push(21, ll)
+        assert.are.equal(linked_list.size(ll), 3)
+    end)
+end)
