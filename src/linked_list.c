@@ -16,7 +16,7 @@ typedef struct node
 //     return NULL;
 // }
 
-// >> not needed, reimplemented in lua_push function
+// >> not needed, reimplemented in lua_push_value function
 // >> malloc > lua_newuserdata
 // Node *list_push(int val, Node *list)
 // {
@@ -70,7 +70,7 @@ int lua_create(lua_State *L)
     return 1;
 }
 
-int lua_push(lua_State *L)
+int lua_push_value(lua_State *L)
 {
     lua_Integer val = luaL_checkinteger(L, 1);
     Node *ll = (Node *)lua_touserdata(L, 2);
@@ -78,6 +78,14 @@ int lua_push(lua_State *L)
     n->value = val;
     n->next = ll;
     return 1;
+}
+
+int lua_pop_value(lua_State *L)
+{
+    Node *ll = (Node *)lua_touserdata(L, 1);
+    lua_pushlightuserdata(L, ll->next);     // TODO: OK ? (check: test not stable)
+    lua_pushinteger(L, ll->value);
+    return 2;       // in lua, 2 return values: a, b = f()
 }
 
 int lua_size(lua_State *L)
@@ -97,7 +105,8 @@ int lua_print(lua_State *L)
 static luaL_Reg const linked_list_lib[] =
     {
         {"create", lua_create},
-        {"push", lua_push},
+        {"push", lua_push_value},
+        {"pop", lua_pop_value},
         {"size", lua_size},
         {"print", lua_print},
         {0, 0}};

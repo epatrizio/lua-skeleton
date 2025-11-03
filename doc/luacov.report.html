@@ -342,17 +342,17 @@
                <span class="miss"><strong>24</strong> Missed</span>
             </span>
          </h2>
-         <pre class="prettyprint lang-lua linenums"><span class="fc" data-hits="49">local messages = require(&quot;chat.messages&quot;)</span>
+         <pre class="prettyprint lang-lua linenums"><span class="fc" data-hits="125">local messages = require(&quot;chat.messages&quot;)</span>
 
-<span class="fc" data-hits="49">local client = {}</span>
+<span class="fc" data-hits="125">local client = {}</span>
 
-<span class="fc" data-hits="49">function client.help(user)</span>
+<span class="fc" data-hits="125">function client.help(user)</span>
 <span class="nc">    print(&quot;user help &quot; .. user.username)</span>
 <span class="nc">    user.tcp_client:send(messages.help())</span>
 <span class="nc">    user.tcp_client:send(messages.user_prompt(user.username))</span>
 end
 
-<span class="fc" data-hits="49">function client.login(tcp_client)</span>
+<span class="fc" data-hits="125">function client.login(tcp_client)</span>
 <span class="nc">    tcp_client:send(messages.user_login())</span>
 <span class="nc">    local username, err = tcp_client:receive()</span>
 <span class="nc">    if not err then</span>
@@ -373,19 +373,19 @@ end
     end
 end
 
-<span class="fc" data-hits="49">function client.send_msg(user_from, user_to, msg)</span>
+<span class="fc" data-hits="125">function client.send_msg(user_from, user_to, msg)</span>
 <span class="nc">    print(&quot;send msg from &quot; .. user_from.username .. &quot; to &quot; .. user_to.username)</span>
 <span class="nc">    user_to.tcp_client:send(&quot;msg from *&quot; .. user_from.username .. &quot;*: &quot; .. msg .. &quot;\n&quot;)</span>
 <span class="nc">    user_to.tcp_client:send(messages.user_prompt(user_to.username))</span>
 end
 
-<span class="fc" data-hits="49">function client.logout(user)</span>
+<span class="fc" data-hits="125">function client.logout(user)</span>
 <span class="fc" data-hits="1">    print(&quot;user logout &quot; .. user.username)</span>
 <span class="nc">    user.tcp_client:send(messages.user_logout(user.username))</span>
 <span class="nc">    user.tcp_client:close()</span>
 end
 
-<span class="fc" data-hits="49">return client</span>
+<span class="fc" data-hits="125">return client</span>
 </pre>
       </div>
 
@@ -401,17 +401,17 @@ end
                <span class="miss"><strong>12</strong> Missed</span>
             </span>
          </h2>
-         <pre class="prettyprint lang-lua linenums"><span class="fc" data-hits="52">local messages = {}</span>
+         <pre class="prettyprint lang-lua linenums"><span class="fc" data-hits="128">local messages = {}</span>
 
-<span class="fc" data-hits="52">function messages.server_start(ip, port)</span>
+<span class="fc" data-hits="128">function messages.server_start(ip, port)</span>
 <span class="nc">    return &quot;chat server up! telnet listening to &quot; .. ip .. &quot;:&quot; .. port</span>
 end
 
-<span class="fc" data-hits="52">function messages.server_loop_error(msg)</span>
+<span class="fc" data-hits="128">function messages.server_loop_error(msg)</span>
 <span class="nc">    return &quot;chat server down! error:&quot; .. msg</span>
 end
 
-<span class="fc" data-hits="52">function messages.help()</span>
+<span class="fc" data-hits="128">function messages.help()</span>
     local help =
 <span class="nc">        &quot;tiny chat server commands:\n&quot; ..</span>
 <span class="nc">        &quot; - &#47;help\n&quot; ..</span>
@@ -422,31 +422,31 @@ end
 <span class="nc">    return help</span>
 end
 
-<span class="fc" data-hits="52">function messages.user_login()</span>
-<span class="fc" data-hits="47">    return &quot;Hello! Please, enter your username: &quot;</span>
+<span class="fc" data-hits="128">function messages.user_login()</span>
+<span class="fc" data-hits="123">    return &quot;Hello! Please, enter your username: &quot;</span>
 end
 
-<span class="fc" data-hits="52">function messages.user_welcome(username)</span>
+<span class="fc" data-hits="128">function messages.user_welcome(username)</span>
 <span class="nc">    return &quot;Welcome, &quot; .. username .. &quot; ;)\n&quot;</span>
 end
 
-<span class="fc" data-hits="52">function messages.user_prompt(username)</span>
-<span class="fc" data-hits="52">    return &quot;$ &quot; .. username .. &quot; # &quot;</span>
+<span class="fc" data-hits="128">function messages.user_prompt(username)</span>
+<span class="fc" data-hits="128">    return &quot;$ &quot; .. username .. &quot; # &quot;</span>
 end
 
-<span class="fc" data-hits="52">function messages.invalid_username(username)</span>
+<span class="fc" data-hits="128">function messages.invalid_username(username)</span>
 <span class="nc">    return &quot;unknown username *&quot; .. username .. &quot;*\n&quot;</span>
 end
 
-<span class="fc" data-hits="52">function messages.invalid_command(msg)</span>
+<span class="fc" data-hits="128">function messages.invalid_command(msg)</span>
 <span class="nc">    return &quot;invalid command! received message:&quot; .. msg .. &quot;\n&quot;</span>
 end
 
-<span class="fc" data-hits="52">function messages.user_logout(username)</span>
+<span class="fc" data-hits="128">function messages.user_logout(username)</span>
 <span class="nc">    return &quot;Goodbye &quot; .. username .. &quot; and see you soon ;)\n&quot;</span>
 end
 
-<span class="fc" data-hits="52">return messages</span>
+<span class="fc" data-hits="128">return messages</span>
 </pre>
       </div>
 
@@ -462,17 +462,17 @@ end
                <span class="miss"><strong>56</strong> Missed</span>
             </span>
          </h2>
-         <pre class="prettyprint lang-lua linenums"><span class="fc" data-hits="49">local socket = require(&quot;socket&quot;)</span>
+         <pre class="prettyprint lang-lua linenums"><span class="fc" data-hits="125">local socket = require(&quot;socket&quot;)</span>
 
-<span class="fc" data-hits="49">local client = require(&quot;chat.client&quot;)</span>
-<span class="fc" data-hits="49">local messages = require(&quot;chat.messages&quot;)</span>
+<span class="fc" data-hits="125">local client = require(&quot;chat.client&quot;)</span>
+<span class="fc" data-hits="125">local messages = require(&quot;chat.messages&quot;)</span>
 
-<span class="fc" data-hits="49">local server = {}</span>
-<span class="fc" data-hits="49">server.connections = {}</span>
+<span class="fc" data-hits="125">local server = {}</span>
+<span class="fc" data-hits="125">server.connections = {}</span>
 
-<span class="fc" data-hits="49">local users = {}</span>
+<span class="fc" data-hits="125">local users = {}</span>
 
-<span class="fc" data-hits="49">function server.start(address, port)</span>
+<span class="fc" data-hits="125">function server.start(address, port)</span>
     -- create and bind a TCP socket
 <span class="nc">    local tcp_server = assert(socket.bind(address, port))</span>
 
@@ -484,7 +484,7 @@ end
 <span class="nc">    return tcp_server</span>
 end
 
-<span class="fc" data-hits="49">function server.user_connection()</span>
+<span class="fc" data-hits="125">function server.user_connection()</span>
 <span class="nc">    local tcp_server = server.connections[1] -- hard-coded: cf. chat_server.start():table.insert server</span>
 <span class="nc">    local tcp_client = tcp_server:accept()</span>
 <span class="nc">    local user, error = client.login(tcp_client)</span>
@@ -569,7 +569,7 @@ local function dispatch_action(user, msg)
     end
 end
 
-<span class="fc" data-hits="49">function server.user_input(tcp_client)</span>
+<span class="fc" data-hits="125">function server.user_input(tcp_client)</span>
 <span class="nc">    local msg, error = tcp_client:receive()</span>
 <span class="nc">    if not error then</span>
 <span class="nc">        local user = users[tcp_client]</span>
@@ -579,7 +579,7 @@ end
     end
 end
 
-<span class="fc" data-hits="49">return server</span>
+<span class="fc" data-hits="125">return server</span>
 </pre>
       </div>
 
@@ -595,18 +595,18 @@ end
                <span class="miss"><strong>0</strong> Missed</span>
             </span>
          </h2>
-         <pre class="prettyprint lang-lua linenums"><span class="fc" data-hits="63">local user = {}</span>
+         <pre class="prettyprint lang-lua linenums"><span class="fc" data-hits="139">local user = {}</span>
 
 ---Create a user record { username: string, tcp_client: socket.client }
 ---@alias socket.client socket.client: luasocket rock import
 ---@param username string
 ---@param tcp_client socket.client
 ---@return table: user table record { username: string, tcp_client: socket.client }
-<span class="fc" data-hits="63">function user.new(username, tcp_client)</span>
-<span class="fc" data-hits="59">    return { username = username, tcp_client = tcp_client }</span>
+<span class="fc" data-hits="139">function user.new(username, tcp_client)</span>
+<span class="fc" data-hits="135">    return { username = username, tcp_client = tcp_client }</span>
 end
 
-<span class="fc" data-hits="63">return user</span>
+<span class="fc" data-hits="139">return user</span>
 </pre>
       </div>
 
@@ -626,37 +626,37 @@ end
 Minimal factorial module
 --]]
 
-<span class="fc" data-hits="76">local factorial = {}</span>
+<span class="fc" data-hits="152">local factorial = {}</span>
 
-<span class="fc" data-hits="76">factorial._VERSION = &quot;1.0&quot;</span>
+<span class="fc" data-hits="152">factorial._VERSION = &quot;1.0&quot;</span>
 
 -- 1: Basic imperative version
-<span class="fc" data-hits="76">function factorial.fact_imp(n)</span>
-<span class="fc" data-hits="526">    assert(n &gt;= 0, &quot;number must be positive&quot;)</span>
-<span class="fc" data-hits="450">    local f = 1</span>
-<span class="fc" data-hits="4650">    for i = 1, n do</span>
-<span class="fc" data-hits="4200">        f = f * i</span>
+<span class="fc" data-hits="152">function factorial.fact_imp(n)</span>
+<span class="fc" data-hits="1058">    assert(n &gt;= 0, &quot;number must be positive&quot;)</span>
+<span class="fc" data-hits="906">    local f = 1</span>
+<span class="fc" data-hits="9362">    for i = 1, n do</span>
+<span class="fc" data-hits="8456">        f = f * i</span>
     end
-<span class="fc" data-hits="450">    return f</span>
+<span class="fc" data-hits="906">    return f</span>
 end
 
 -- 2: Standard recursive version
-<span class="fc" data-hits="76">function factorial.fact_rec(n)</span>
-<span class="fc" data-hits="4726">    assert(n &gt;= 0, &quot;number must be positive&quot;)</span>
-<span class="fc" data-hits="4650">    if n &lt;= 0 then</span>
-<span class="fc" data-hits="450">        return 1</span>
+<span class="fc" data-hits="152">function factorial.fact_rec(n)</span>
+<span class="fc" data-hits="9514">    assert(n &gt;= 0, &quot;number must be positive&quot;)</span>
+<span class="fc" data-hits="9362">    if n &lt;= 0 then</span>
+<span class="fc" data-hits="906">        return 1</span>
     else
-<span class="fc" data-hits="4200">        return n * factorial.fact_rec(n - 1)</span>
+<span class="fc" data-hits="8456">        return n * factorial.fact_rec(n - 1)</span>
     end
 end
 
-<span class="fc" data-hits="76">return factorial</span>
+<span class="fc" data-hits="152">return factorial</span>
 </pre>
       </div>
 
    </main>
    <footer>
-        Code coverage generated by <a href="https://lunarmodules.github.io/luacov/" target="_blank">LuaCov</a> at 2025-10-29 21:03:06
+        Code coverage generated by <a href="https://lunarmodules.github.io/luacov/" target="_blank">LuaCov</a> at 2025-11-03 16:14:18
    </footer>
 
    <script type="text/javascript">
