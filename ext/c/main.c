@@ -12,7 +12,7 @@ int main()
     lua_State *L = luaL_newstate();
     luaL_openlibs(L);
 
-    if (luaL_loadfile(L, "./ext/c/stuff.lua") || lua_pcall(L, 0, 0, 0))
+    if (luaL_loadfile(L, "./ext/lua/stuff.lua") || lua_pcall(L, 0, 0, 0))
         lua_error(L);
 
     printf("lua file loaded!\n");
