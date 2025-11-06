@@ -39,3 +39,6 @@ luac.out
 *.x86_64
 *.hex
 
+# Custom
+ext_c
+/ext/ocaml/_build

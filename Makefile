@@ -4,3 +4,11 @@ ext_c_build:
 
 ext_c_run:
 	./ext_c
+
+ext_ocaml_build:
+	cd ext/ocaml; \
+	dune build
+
+ext_ocaml_run:
+	cd ext/ocaml; \
+	dune exec ocaml-lua-exp

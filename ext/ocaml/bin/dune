@@ -1,0 +1,4 @@
+(executable
+ (public_name ocaml-lua-exp)
+ (name main)
+ (libraries ocaml-lua))
