@@ -42,3 +42,6 @@ luac.out
 # Custom
 ext_c
 /ext/ocaml/_build
+factorial_ml
+*.cmi
+*.cmx

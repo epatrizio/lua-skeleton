@@ -3,6 +3,12 @@ require "busted.runner" ()
 local factorial = require("factorial")
 local factorial_c = require("factorial_c")
 
+-- local factorial_ml = require("factorial_ml")
+-- TODO: bug (#wip)
+--  error loading module 'factorial_ml' from file './factorial_ml.so':
+--	./factorial_ml.so: undefined symbol: caml_termination_hook
+--  https://github.com/epatrizio/lua-skeleton/issues
+
 describe("factorial tests with busted framework", function ()
     describe("lua module", function ()
         it("imperative implementation", function ()
