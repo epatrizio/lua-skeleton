@@ -20,7 +20,11 @@ end
 
 function testFactError()
     lu.assertError(factorial.fact_imp, -42)
+    lu.assertError(factorial.fact_imp, "incorrect")
+    lu.assertError(factorial.fact_imp, false)
     lu.assertError(factorial.fact_rec, -42)
+    lu.assertError(factorial.fact_rec, "incorrect")
+    lu.assertError(factorial.fact_rec, false)
 end
 
 os.exit(lu.LuaUnit.run())
