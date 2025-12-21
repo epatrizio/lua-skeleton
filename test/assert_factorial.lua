@@ -1,3 +1,5 @@
+local inspect = require("inspect")
+
 local factorial = require("factorial")
 
 io.write("Imperative factorial implementation ... ")
@@ -34,7 +36,13 @@ local function handle_error(err)
     if err == "<unknown>" then
         return "Unknown error!"
     else
-        return err.func .. ":" .. err.msg
+        -- getinfo: to inspect a function at a stack level (hard-coded: 3).
+        -- local info = debug.getinfo(3).source .. " - line " .. debug.getinfo(3).linedefined
+        -- inspect module is very useful for manual debugging (btw, part of Lua Debug vscode extension)
+        local info = inspect(debug.getinfo(3))      -- getinfo return a table
+        local trace = debug.traceback()
+        local memory_usage = "memory_usage: " .. collectgarbage("count") .. " Kbytes"
+        return err.func .. ":" .. err.msg .. "\n" .. memory_usage .. "\n" .. info .. "\n" .. trace
     end
 end
 
