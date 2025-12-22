@@ -19,6 +19,7 @@ dependencies = {
     "lua >= 5.1, < 5.5",
     "luasocket >= 3.1",
 	"inspect >= 3.1",
+	"luacheck >= 1.2",
 }
 build = {
     type = "builtin",
