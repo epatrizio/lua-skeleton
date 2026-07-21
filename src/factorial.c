@@ -41,15 +41,20 @@ int lua_fact_rec(lua_State *L)
 static luaL_Reg const factorial_c_lib[] =
     {
         {"fact_imp", lua_fact_imp},
-        {"fact_rec", lua_fact_rec},
-        {0, 0}};
+        {"fact_rec", lua_fact_rec},     // function
+        {"_VERSION", NULL},             // constant: see luaopen_factorial_c
+        {NULL, NULL}};
 
-#ifndef FACTORIAL_C_API
-#define FACTORIAL_C_API
-#endif
+// #ifndef FACTORIAL_C_API
+// #define FACTORIAL_C_API
+// #endif
 
-FACTORIAL_C_API luaopen_factorial_c(lua_State *L)
+// luaopen_**factorial_c** > require("factorial_c")
+// FACTORIAL_C_API luaopen_factorial_c(lua_State *L)
+LUAMOD_API int luaopen_factorial_c(lua_State *L)
 {
     luaL_newlib(L, factorial_c_lib);
+    lua_pushstring(L, "1.0");
+    lua_setfield(L, -2, "_VERSION");
     return 1;
 }
