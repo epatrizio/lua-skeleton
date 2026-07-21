@@ -14,8 +14,16 @@ assert(factorial.fact_rec(1) == 1)
 assert(factorial.fact_rec(5) == 120)
 print("Ok")
 
+io.write("CPS factorial implementation ... ")
+assert(factorial.fact_cont(0) == 1)
+assert(factorial.fact_cont(1) == 1)
+assert(factorial.fact_cont(5) == 120)
+print("Ok")
+
 io.write("Equality between imperative and recursive implementations ... ")
 assert(factorial.fact_imp(10) == factorial.fact_rec(10), "ko!")
+assert(factorial.fact_imp(10) == factorial.fact_cont(10), "ko!")
+assert(factorial.fact_cont(10) == factorial.fact_rec(10), "ko!")
 print("Ok")
 
 io.write("Error checking for negative argument ... ")

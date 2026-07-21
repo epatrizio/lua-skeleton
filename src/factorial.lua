@@ -4,7 +4,7 @@ Minimal factorial module
 
 local factorial = {}
 
-factorial._VERSION = "1.0"
+factorial._VERSION = "1.1"
 
 local function is_integer(n)
     return type(n) == "number" and math.floor(n) == n
@@ -36,6 +36,20 @@ function factorial.fact_rec(n)
     else
         return n * factorial.fact_rec(n - 1)
     end
+end
+
+-- 3: CPS (Continuation Passing Style) version
+-- NB. no 'n' validity checks here (same, see imp and rec version)
+local function Fact_continuation(f_cont, n)
+    if n == 0 then
+        return f_cont(1)
+    else
+        return Fact_continuation(function (x) return f_cont(n * x) end, n - 1)
+    end
+end
+
+function factorial.fact_cont(n)
+    return Fact_continuation(function (x) return x end, n)
 end
 
 return factorial
