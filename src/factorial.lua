@@ -52,4 +52,24 @@ function factorial.fact_cont(n)
     return Fact_continuation(function (x) return x end, n)
 end
 
+-- 4: Coroutine version
+-- NB. idem, no 'n' validity checks here (same, see imp and rec version)
+local function I_Gen()
+    local i = 0
+    while true do
+        i = i + 1
+        coroutine.yield(i)
+    end
+end
+
+function factorial.fact_co(n)
+    local i_gen = coroutine.create(I_Gen)
+    local status, i, f = true, 1, 1
+    while status and i <= n do
+        f = f * i
+        status, i = coroutine.resume(i_gen)
+    end
+    return f
+end
+
 return factorial

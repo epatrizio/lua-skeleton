@@ -14,16 +14,25 @@ function testFactRec()
     lu.assertEquals(factorial.fact_rec(5), 120)
 end
 
-function testFactCont()
+function testFactContinuation()
     lu.assertEquals(factorial.fact_cont(0), 1)
     lu.assertEquals(factorial.fact_cont(1), 1)
     lu.assertEquals(factorial.fact_cont(5), 120)
+end
+
+function testFactCoroutine()
+    lu.assertEquals(factorial.fact_co(0), 1)
+    lu.assertEquals(factorial.fact_co(1), 1)
+    lu.assertEquals(factorial.fact_co(5), 120)
 end
 
 function testFactEq()
     lu.assertEquals(factorial.fact_imp(10), factorial.fact_rec(10))
     lu.assertEquals(factorial.fact_imp(10), factorial.fact_cont(10))
     lu.assertEquals(factorial.fact_cont(10), factorial.fact_rec(10))
+    lu.assertEquals(factorial.fact_co(10), factorial.fact_imp(10))
+    lu.assertEquals(factorial.fact_co(10), factorial.fact_rec(10))
+    lu.assertEquals(factorial.fact_co(10), factorial.fact_cont(10))
 end
 
 function testFactError()
