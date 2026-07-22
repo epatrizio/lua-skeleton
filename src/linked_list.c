@@ -7,54 +7,60 @@
 typedef struct node
 {
     int value;
-    struct node *next;
+    struct node* next;
 } Node;
 
+/*
+This linked_list implementation (~stack) attempts to use
+full userdata (https://www.lua.org/pil/28.1.html) not light userdata (https://www.lua.org/pil/28.5.html).
+That's why functions list_push and list_free are not usefull. (see malloc-free VS Lua GC)
+However, there seems to be a bug in lua_pop_value function > lua_pushlightuserdata
+*/
+
 // >> not needed, reimplemented in lua_create function
-// Node *list_create()
+// Node* list_create()
 // {
 //     return NULL;
 // }
 
 // >> not needed, reimplemented in lua_push_value function
 // >> malloc > lua_newuserdata
-// Node *list_push(int val, Node *list)
+// Node* list_push(int val, Node* list)
 // {
-//     Node *n = malloc(sizeof(Node));
+//     Node* n = malloc(sizeof(Node));
 //     n->value = val;
 //     n->next = list;
 //     return n;
 // }
 
-long list_size(Node *list)
+long list_size(Node* list)
 {
-    long len = 0;
-    Node *current = list;
+    long size = 0;
+    Node* current = list;
     while (current != NULL)
     {
-        len++;
+        size++;
         current = current->next;
     }
 
-    return len;
+    return size;
 }
 
-// >> not useful, and no reimplementation
-// >> no malloc (see list_push) > no free!
-// void list_free(Node *list)
+// >> no malloc (see list_push) >> no free!
+// void list_free(Node* list)
 // {
-//     Node *current_node = list;
+//     Node* current_node = list;
 //     while (current_node != NULL)
 //     {
-//         Node *next_node = current_node->next;
+//         Node* next_node = current_node->next;
 //         free(current_node);
 //         current_node = next_node;
 //     }
 // }
 
-void list_print(Node *list)
+void list_print(Node* list)
 {
-    Node *current = list;
+    Node* current = list;
     while (current != NULL)
     {
         printf("%i ", current->value);
@@ -64,40 +70,44 @@ void list_print(Node *list)
     printf("\n");
 }
 
-int lua_create(lua_State *L)
+// ---- lua interface ----
+
+int lua_create(lua_State* L)
 {
     lua_pushnil(L);
     return 1;
 }
 
-int lua_push_value(lua_State *L)
+int lua_push_value(lua_State* L)
 {
     lua_Integer val = luaL_checkinteger(L, 1);
-    Node *ll = (Node *)lua_touserdata(L, 2);
-    Node *n = (Node *)lua_newuserdata(L, sizeof(Node));
+    Node* ll = (Node*)lua_touserdata(L, 2);
+    // ll should be NULL (empty list)
+    // luaL_argcheck(L, ll != NULL, 1, "`Node' expected");
+    Node* n = (Node*)lua_newuserdata(L, sizeof(Node));
     n->value = val;
     n->next = ll;
     return 1;
 }
 
-int lua_pop_value(lua_State *L)
+int lua_pop_value(lua_State* L)
 {
-    Node *ll = (Node *)lua_touserdata(L, 1);
-    lua_pushlightuserdata(L, ll->next);     // TODO: OK ? (check: test not stable)
+    Node* ll = (Node*)lua_touserdata(L, 1);
+    lua_pushlightuserdata(L, ll->next);     // BUG ? (check: test not stable)
     lua_pushinteger(L, ll->value);
     return 2;       // in lua, 2 return values: a, b = f()
 }
 
-int lua_size(lua_State *L)
+int lua_size(lua_State* L)
 {
-    Node *ll = (Node *)lua_touserdata(L, 1);
+    Node* ll = (Node*)lua_touserdata(L, 1);
     lua_pushinteger(L, list_size(ll));
     return 1;
 }
 
-int lua_print(lua_State *L)
+int lua_print(lua_State* L)
 {
-    Node *ll = (Node *)lua_touserdata(L, 1);
+    Node* ll = (Node*)lua_touserdata(L, 1);
     list_print(ll);
     return 1;
 }
@@ -109,13 +119,9 @@ static luaL_Reg const linked_list_lib[] =
         {"pop", lua_pop_value},
         {"size", lua_size},
         {"print", lua_print},
-        {0, 0}};
+        {NULL, NULL}};
 
-#ifndef LINKED_LIST_API
-#define LINKED_LIST_API
-#endif
-
-LINKED_LIST_API luaopen_linked_list(lua_State *L)
+LUAMOD_API int luaopen_linked_list(lua_State* L)
 {
     luaL_newlib(L, linked_list_lib);
     return 1;
