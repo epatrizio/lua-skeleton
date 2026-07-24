@@ -2,15 +2,22 @@
 Minimal factorial module
 --]]
 
+--- Different factorial function implementation
+-- @module Lua_factorial
+
 local factorial = {}
 
+--- module version 1.1
 factorial._VERSION = "1.1"
 
 local function is_integer(n)
     return type(n) == "number" and math.floor(n) == n
 end
 
--- 1: Basic imperative version
+--- 1: Basic imperative version
+--- @function factorial.fact_imp
+-- @param int factorial number to compute
+-- @return factorial result
 function factorial.fact_imp(n)
     if not is_integer(n) then
         error("factorial.fact_imp error: number must be an integer", 1)
@@ -24,7 +31,10 @@ function factorial.fact_imp(n)
     return f
 end
 
--- 2: Standard recursive version
+--- 2: Standard recursive version
+--- @function factorial.fact_rec
+-- @param int factorial number to compute
+-- @return factorial result
 function factorial.fact_rec(n)
     if not is_integer(n) then
         -- an arror can be of all types
@@ -38,9 +48,8 @@ function factorial.fact_rec(n)
     end
 end
 
--- 3: CPS (Continuation Passing Style) version
--- NB. no 'n' validity checks here (same, see imp and rec version)
 local function Fact_continuation(f_cont, n)
+    -- NB. no 'n' validity checks here (same, see imp and rec version)
     if n == 0 then
         return f_cont(1)
     else
@@ -48,11 +57,14 @@ local function Fact_continuation(f_cont, n)
     end
 end
 
+--- 3: CPS (Continuation Passing Style) version
+--- @function factorial.fact_cont
+-- @param int factorial number to compute
+-- @return factorial result
 function factorial.fact_cont(n)
     return Fact_continuation(function (x) return x end, n)
 end
 
--- 4: Coroutine version
 -- NB. idem, no 'n' validity checks here (same, see imp and rec version)
 local function I_Gen()
     local i = 0
@@ -62,6 +74,10 @@ local function I_Gen()
     end
 end
 
+--- 4: Coroutine version
+--- @function factorial.fact_co
+-- @param int factorial number to compute
+-- @return factorial result
 function factorial.fact_co(n)
     local i_gen = coroutine.create(I_Gen)
     local status, i, f = true, 1, 1

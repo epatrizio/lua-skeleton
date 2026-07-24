@@ -3,6 +3,11 @@
 #include "lua.h"
 #include "lauxlib.h"
 
+/***
+Different factorial function implementation
+@module C_factorial
+*/
+
 long fact_imp(long n)
 {
     assert(n >= 0);
@@ -24,14 +29,26 @@ long fact_rec(long n)
         return n * fact_rec(n - 1);
 }
 
-int lua_fact_imp(lua_State *L)
+/***
+1: Basic imperative version
+@function fact_imp
+@param int factorial number to compute
+@return factorial result
+*/
+int lua_fact_imp(lua_State* L)
 {
     lua_Integer n = luaL_checkinteger(L, 1);
     lua_pushinteger(L, fact_imp(n));
     return 1;
 }
 
-int lua_fact_rec(lua_State *L)
+/***
+2: Standard recursive version
+@function fact_rec
+@param int factorial number to compute
+@return factorial result
+*/
+int lua_fact_rec(lua_State* L)
 {
     lua_Integer n = luaL_checkinteger(L, 1);
     lua_pushinteger(L, fact_rec(n));
@@ -50,8 +67,8 @@ static luaL_Reg const factorial_c_lib[] =
 // #endif
 
 // luaopen_**factorial_c** > require("factorial_c")
-// FACTORIAL_C_API luaopen_factorial_c(lua_State *L)
-LUAMOD_API int luaopen_factorial_c(lua_State *L)
+// FACTORIAL_C_API luaopen_factorial_c(lua_State* L)
+LUAMOD_API int luaopen_factorial_c(lua_State* L)
 {
     luaL_newlib(L, factorial_c_lib);
     lua_pushstring(L, "1.0");
