@@ -9,27 +9,28 @@ int main()
 {
     printf("Extending C program with Lua!\n");
 
-    lua_State *L = luaL_newstate();
+    lua_State* L = luaL_newstate();
     luaL_openlibs(L);
 
+    // chunk load (luaL_loadfile) and chunk run (lua_pcall)
     if (luaL_loadfile(L, "./ext/lua/stuff.lua") || lua_pcall(L, 0, 0, 0))
         lua_error(L);
 
     printf("lua file loaded!\n");
 
     printf("configuration loading ...\n");
-    lua_getglobal(L, "var_1");
+    lua_getglobal(L, "var_1");  // Pushes onto the stack
     lua_getglobal(L, "var_2");
     lua_getglobal(L, "var_3");
-    if (!lua_isinteger(L, -3))
+    if (!lua_isinteger(L, -3))  // var_1
         lua_error(L);
-    if (!lua_isstring(L, -2))
+    if (!lua_isstring(L, -2))   // var_2
         lua_error(L);
-    if (!lua_istable(L, -1))
+    if (!lua_istable(L, -1))    // var_3
         lua_error(L);
 
     int var_1 = lua_tointeger(L, -3);
-    const char *var_2 = lua_tostring(L, -2);
+    const char* var_2 = lua_tostring(L, -2);
 
     lua_pushstring(L, "key_1");
     lua_gettable(L, -2);

@@ -13,8 +13,8 @@ let () =
   let ls = LuaL.newstate () in
   LuaL.openlibs(ls);
 
-  let status_l = LuaL.loadfile ls "../lua/stuff.lua" in
-  let status_c = pcall ls 0 0 0 in
+  let status_l = LuaL.loadfile ls "../lua/stuff.lua" in (* chunk load *)
+  let status_c = pcall ls 0 0 0 in  (* chunk run *)
   if status_l != LUA_OK && status_c != LUA_OK then
     print_endline "loadfile error"
     (* TODO: LuaL.error ls format *)
