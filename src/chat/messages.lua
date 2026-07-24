@@ -23,6 +23,10 @@ function messages.user_login()
     return "Hello! Please, enter your username: "
 end
 
+function messages.user_login_error(username)
+    return "Username " .. username .. " already connected!\n"
+end
+
 function messages.user_welcome(username)
     return "Welcome, " .. username .. " ;)\n"
 end

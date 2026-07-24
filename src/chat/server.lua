@@ -23,7 +23,7 @@ end
 function server.user_connection()
     local tcp_server = server.connections[1] -- hard-coded: cf. chat_server.start():table.insert server
     local tcp_client = tcp_server:accept()
-    local user, error = client.login(tcp_client)
+    local user, error = client.login(tcp_client, users)
     if not error then
         table.insert(server.connections, tcp_client)
         users[tcp_client] = user

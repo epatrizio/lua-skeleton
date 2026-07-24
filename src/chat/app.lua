@@ -6,9 +6,9 @@ local messages = require("chat.messages")
 local address = "localhost"
 local port = 1234
 
--- command line args
+-- command line args - https://www.lua.org/manual/5.4/manual.html#7
 if arg[1] then address = arg[1] end
-if arg[2] then arg = arg[2] end
+if arg[2] then port = tonumber(arg[2]) end
 
 local tcp_server = server.start(address, port)
 
