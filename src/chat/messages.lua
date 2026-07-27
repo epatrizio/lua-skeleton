@@ -24,7 +24,15 @@ function messages.user_login()
 end
 
 function messages.user_login_error(username)
-    return "Username " .. username .. " already connected!\n"
+    return "username " .. username .. " already connected!\n"
+end
+
+function messages.user_password()
+    return "Please, enter your password: "
+end
+
+function messages.user_password_error()
+    return "invalid username/password!\n"
 end
 
 function messages.user_welcome(username)
