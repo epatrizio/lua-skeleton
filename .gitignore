@@ -44,3 +44,5 @@ ext_c
 /ext/ocaml/_build
 *.cmi
 *.cmx
+/src/chat/chat.db
+/src/chat/users.pwd
