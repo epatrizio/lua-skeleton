@@ -1,7 +1,10 @@
 local messages = {}
 
 function messages.server_start(ip, port)
-    return "chat server up! telnet listening to " .. ip .. ":" .. port
+    local msg =
+        "data mode: " .. _G.Data_mode .. "\n" ..
+        "chat server up! telnet listening to " .. ip .. ":" .. port
+    return msg
 end
 
 function messages.server_loop_error(msg)

@@ -20,6 +20,7 @@ dependencies = {
     "luasocket >= 3.1",
 	"luaposix >= 36.3",
 	"sha1 >= 0.5",
+	"lsqlite3 >= 0.9.5",
 	"inspect >= 3.1",
 	"luacheck >= 1.2",
 }
