@@ -15,7 +15,7 @@ end
 
 local function user_password(username, password)
     local pwd_sha1 = sha1.sha1(password)
-    for line in io.lines("src/chat/users.pwd") do
+    for line in io.lines(_G.Users_file) do
         local i1, _ = string.find(line, username .. ":")
         local i2, _ = string.find(line, ":" .. pwd_sha1)
         if i1 ~= nil and i1 > 0 and i2 ~= nil and i2 > 0 then

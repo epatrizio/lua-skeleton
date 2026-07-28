@@ -3,8 +3,10 @@ local socket = require("socket")
 local server = require("chat.server")
 local messages = require("chat.messages")
 
-local address = "localhost"
-local port = 1234
+require("chat.setup")
+
+local address = _G.Server_address
+local port = _G.Server_port
 
 -- command line args - https://www.lua.org/manual/5.4/manual.html#7
 if arg[1] then address = arg[1] end
