@@ -24,11 +24,15 @@ here is a complete example of a (toy) application. Complete in the sense that:
 
 ## Testing tools
 
-#WIP
+Three testing approaches are implemented :
 
-* 3 framaworks: core (assert) + luaunit + busted
-* code coverage: luacov + busted (`busted -v -c`)
-* `luarocks test`: see test.sh + .rockspec
+* `lua test/assert_factorial.lua -v` : *core* approach using the `assert` basic keyword
+* `lua test/test_factorial.lua -v` : by using [luaunit](https://github.com/bluebird75/luaunit) framework
+* `busted -v` : by using [busted](https://lunarmodules.github.io/busted/) framework
+  * for code coverage generation, [luacov](https://luarocks.org/modules/lunarmodules/luacov) is needed with busted (`busted -v -c`)
+
+`luarocks test` command launches the 3 testing approaches.
+See `test.sh` file referenced in `.rockspec` file for configuration.
 
 ## Code examples
 
