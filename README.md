@@ -38,8 +38,10 @@ local factorial_c = require("factorial_c")
 local linked_list = require("linked_list")
 ```
 
-* lua embedded in C and in OCaml
-* [Chat app](https://github.com/epatrizio/lua-skeleton/tree/main/src/chat) #WIP
+* `ext/c/main.c`: Lua embedded in a C program (see Makefile `ext_c_build` and `ext_c_run` rules)
+* `ext/ocaml/`: Lua embedded in an OCaml program with [Lua bindings](https://github.com/pdonadeo/ocaml-lua)
+(see Makefile `ext_ocaml_build` and `ext_ocaml_run` rules)
+* [Chat app](https://github.com/epatrizio/lua-skeleton/tree/main/src/chat) #TODO
 
 ## Testing tools
 
