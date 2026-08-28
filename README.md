@@ -22,6 +22,25 @@ here is a complete example of a (toy) application. Complete in the sense that:
   * `luarocks doc --home lua-skeleton`: open *homepage* (specified in .rockspec) in a browser
 * Testing tools: focus below
 
+## Code examples
+
+* `src/factorial.lua`: Lua factorial module (see build.modules section in .rockspec file for module name config)
+
+```lua
+local factorial = require("factorial")
+```
+
+* `src/factorial.c`: C Lua factorial module (idem, see build.modules section in .rockspec)
+* `src/linked_list.c`: C Lua linked_list module with C pointer manipulation (idem, see build.modules section in .rockspec)
+
+```lua
+local factorial_c = require("factorial_c")
+local linked_list = require("linked_list")
+```
+
+* lua embedded in C and in OCaml
+* [Chat app](https://github.com/epatrizio/lua-skeleton/tree/main/src/chat) #WIP
+
 ## Testing tools
 
 Three testing approaches are implemented :
@@ -33,11 +52,3 @@ Three testing approaches are implemented :
 
 `luarocks test` command launches the 3 testing approaches.
 See `test.sh` file referenced in `.rockspec` file for configuration.
-
-## Code examples
-
-#WIP
-
-* factorial module (lua + C) & linked_list (C)
-* lua embedded in C and in OCaml
-* [Chat app](https://github.com/epatrizio/lua-skeleton/tree/main/src/chat) 
