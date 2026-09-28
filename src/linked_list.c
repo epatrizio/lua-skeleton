@@ -121,7 +121,7 @@ static luaL_Reg const linked_list_lib[] =
         {"print", lua_print},
         {NULL, NULL}};
 
-LUAMOD_API int luaopen_linked_list(lua_State* L)
+/*LUAMOD_API*/ int luaopen_linked_list(lua_State* L)
 {
     luaL_newlib(L, linked_list_lib);
     return 1;

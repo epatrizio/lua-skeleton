@@ -68,7 +68,7 @@ static luaL_Reg const factorial_c_lib[] =
 
 // luaopen_**factorial_c** > require("factorial_c")
 // FACTORIAL_C_API luaopen_factorial_c(lua_State* L)
-LUAMOD_API int luaopen_factorial_c(lua_State* L)
+/*LUAMOD_API*/ int luaopen_factorial_c(lua_State* L)
 {
     luaL_newlib(L, factorial_c_lib);
     lua_pushstring(L, "1.0");
