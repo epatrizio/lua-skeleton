@@ -16,7 +16,7 @@ description = {
 	maintainer = "Eric Patrizio <epatrizio at mpns dot fr>",
 }
 dependencies = {
-    "lua >= 5.1, < 5.5",
+    "lua >= 5.1, <= 5.5",
     "luasocket >= 3.1",
 	"luaposix >= 36.3",
 	"sha1 >= 0.5",
@@ -51,7 +51,7 @@ test = {
     -- script = "spec/factorial_spec.lua",	-- busted
 }
 test_dependencies = {
-    "lua >= 5.1, < 5.5",
+    "lua >= 5.1, <= 5.5",
     "luaunit >= 3.4",
     "busted >= 2.2",
 }
