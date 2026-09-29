@@ -316,16 +316,16 @@
 </head>
 <body onload="initialize()">
    <main>
-      <div class="file warning total">
+      <div class="file danger total">
          <h1 class="title">
             Code coverage report
             <span class="stats">
                <span class="cov">
-                  <span class="bg" style="width: 42.86%"></span>
-                  <span><strong>42.86%</strong> Coverage</span>
+                  <span class="bg" style="width: 37.44%"></span>
+                  <span><strong>37.44%</strong> Coverage</span>
                </span>
-               <span class="hits"><strong>69</strong> Hits</span>
-               <span class="miss"><strong>92</strong> Missed</span>
+               <span class="hits"><strong>76</strong> Hits</span>
+               <span class="miss"><strong>127</strong> Missed</span>
             </span>
          </h1>
       </div>
@@ -335,57 +335,70 @@
             src/chat/client.lua
             <span class="stats">
                <span class="cov">
-                  <span class="bg" style="width: 25.00%"></span>
-                  <span><strong>25.00%</strong> Coverage</span>
+                  <span class="bg" style="width: 20.51%"></span>
+                  <span><strong>20.51%</strong> Coverage</span>
                </span>
                <span class="hits"><strong>8</strong> Hits</span>
-               <span class="miss"><strong>24</strong> Missed</span>
+               <span class="miss"><strong>31</strong> Missed</span>
             </span>
          </h2>
-         <pre class="prettyprint lang-lua linenums"><span class="fc" data-hits="310">local messages = require(&quot;chat.messages&quot;)</span>
+         <pre class="prettyprint lang-lua linenums"><span class="fc" data-hits="40">local cuser = require(&quot;chat.user&quot;)</span>
+<span class="fc" data-hits="40">local messages = require(&quot;chat.messages&quot;)</span>
 
-<span class="fc" data-hits="310">local client = {}</span>
+<span class="fc" data-hits="40">local client = {}</span>
 
-<span class="fc" data-hits="310">function client.help(user)</span>
+<span class="fc" data-hits="40">function client.help(user)</span>
 <span class="nc">    print(&quot;user help &quot; .. user.username)</span>
 <span class="nc">    user.tcp_client:send(messages.help())</span>
 <span class="nc">    user.tcp_client:send(messages.user_prompt(user.username))</span>
 end
 
-<span class="fc" data-hits="310">function client.login(tcp_client)</span>
+<span class="fc" data-hits="40">function client.login(tcp_client, users)</span>
+    local error = function (msg)
+<span class="nc">        local err_msg = &quot;user login error: &quot; .. msg</span>
+<span class="nc">        print(err_msg)</span>
+<span class="nc">        tcp_client:send(err_msg)</span>
+<span class="nc">        tcp_client:close()</span>
+<span class="nc">        return err_msg</span>
+    end
 <span class="nc">    tcp_client:send(messages.user_login())</span>
 <span class="nc">    local username, err = tcp_client:receive()</span>
-<span class="nc">    if not err then</span>
-<span class="nc">        print(&quot;user login &quot; .. username)</span>
-<span class="nc">        tcp_client:settimeout(nil)</span>
-<span class="nc">        tcp_client:setoption(&quot;keepalive&quot;, true)</span>
-<span class="nc">        tcp_client:send(messages.user_welcome(username))</span>
-<span class="nc">        tcp_client:send(messages.help())</span>
-<span class="nc">        tcp_client:send(messages.user_prompt(username))</span>
-<span class="nc">        local user = require(&quot;chat.user&quot;)</span>
-<span class="nc">        return user.new(username, tcp_client)</span>
+<span class="nc">    if users[tcp_client] ~= nil or cuser.is_connected_user(users, username) then</span>
+<span class="nc">        return nil, error(messages.user_login_error(username))</span>
     else
-<span class="nc">        local err_msg = &quot;user login error:&quot; .. err</span>
-<span class="nc">        print(err_msg)</span>
-<span class="nc">        tcp_client:send(err_msg .. &quot;\n&quot;)</span>
-<span class="nc">        tcp_client:close()</span>
-<span class="nc">        return nil, err_msg</span>
+<span class="nc">        if not err then</span>
+<span class="nc">            tcp_client:send(messages.user_password())</span>
+<span class="nc">            local pwd, _err = tcp_client:receive()</span>
+<span class="nc">            if cuser.is_valid_login(username, pwd) then</span>
+<span class="nc">                print(&quot;user login &quot; .. username)</span>
+<span class="nc">                tcp_client:settimeout(nil)</span>
+<span class="nc">                tcp_client:setoption(&quot;keepalive&quot;, true)</span>
+<span class="nc">                tcp_client:send(messages.user_welcome(username))</span>
+<span class="nc">                tcp_client:send(messages.help())</span>
+<span class="nc">                tcp_client:send(messages.user_prompt(username))</span>
+<span class="nc">                return cuser.new(username, tcp_client)</span>
+            else
+<span class="nc">                return nil, error(messages.user_password_error())</span>
+            end
+        else
+<span class="nc">            return nil, error(err)</span>
+        end
     end
 end
 
-<span class="fc" data-hits="310">function client.send_msg(user_from, user_to, msg)</span>
+<span class="fc" data-hits="40">function client.send_msg(user_from, user_to, msg)</span>
 <span class="nc">    print(&quot;send msg from &quot; .. user_from.username .. &quot; to &quot; .. user_to.username)</span>
 <span class="nc">    user_to.tcp_client:send(&quot;msg from *&quot; .. user_from.username .. &quot;*: &quot; .. msg .. &quot;\n&quot;)</span>
 <span class="nc">    user_to.tcp_client:send(messages.user_prompt(user_to.username))</span>
 end
 
-<span class="fc" data-hits="310">function client.logout(user)</span>
-<span class="fc" data-hits="1">    print(&quot;user logout &quot; .. user.username)</span>
+<span class="fc" data-hits="40">function client.logout(user)</span>
+<span class="nc">    print(&quot;user logout &quot; .. user.username)</span>
 <span class="nc">    user.tcp_client:send(messages.user_logout(user.username))</span>
 <span class="nc">    user.tcp_client:close()</span>
 end
 
-<span class="fc" data-hits="310">return client</span>
+<span class="fc" data-hits="40">return client</span>
 </pre>
       </div>
 
@@ -394,24 +407,27 @@ end
             src/chat/messages.lua
             <span class="stats">
                <span class="cov">
-                  <span class="bg" style="width: 52.00%"></span>
-                  <span><strong>52.00%</strong> Coverage</span>
+                  <span class="bg" style="width: 48.48%"></span>
+                  <span><strong>48.48%</strong> Coverage</span>
                </span>
-               <span class="hits"><strong>13</strong> Hits</span>
-               <span class="miss"><strong>12</strong> Missed</span>
+               <span class="hits"><strong>16</strong> Hits</span>
+               <span class="miss"><strong>17</strong> Missed</span>
             </span>
          </h2>
-         <pre class="prettyprint lang-lua linenums"><span class="fc" data-hits="313">local messages = {}</span>
+         <pre class="prettyprint lang-lua linenums"><span class="fc" data-hits="40">local messages = {}</span>
 
-<span class="fc" data-hits="313">function messages.server_start(ip, port)</span>
-<span class="nc">    return &quot;chat server up! telnet listening to &quot; .. ip .. &quot;:&quot; .. port</span>
+<span class="fc" data-hits="40">function messages.server_start(ip, port)</span>
+    local msg =
+<span class="nc">        &quot;data mode: &quot; .. _G.Data_mode .. &quot;\n&quot; ..</span>
+<span class="nc">        &quot;chat server up! telnet listening to &quot; .. ip .. &quot;:&quot; .. port</span>
+<span class="nc">    return msg</span>
 end
 
-<span class="fc" data-hits="313">function messages.server_loop_error(msg)</span>
+<span class="fc" data-hits="40">function messages.server_loop_error(msg)</span>
 <span class="nc">    return &quot;chat server down! error:&quot; .. msg</span>
 end
 
-<span class="fc" data-hits="313">function messages.help()</span>
+<span class="fc" data-hits="40">function messages.help()</span>
     local help =
 <span class="nc">        &quot;tiny chat server commands:\n&quot; ..</span>
 <span class="nc">        &quot; - &#47;help\n&quot; ..</span>
@@ -422,31 +438,43 @@ end
 <span class="nc">    return help</span>
 end
 
-<span class="fc" data-hits="313">function messages.user_login()</span>
-<span class="fc" data-hits="308">    return &quot;Hello! Please, enter your username: &quot;</span>
+<span class="fc" data-hits="40">function messages.user_login()</span>
+<span class="fc" data-hits="40">    return &quot;Hello! Please, enter your username: &quot;</span>
 end
 
-<span class="fc" data-hits="313">function messages.user_welcome(username)</span>
+<span class="fc" data-hits="40">function messages.user_login_error(username)</span>
+<span class="nc">    return &quot;username &quot; .. username .. &quot; already connected!\n&quot;</span>
+end
+
+<span class="fc" data-hits="40">function messages.user_password()</span>
+<span class="nc">    return &quot;Please, enter your password: &quot;</span>
+end
+
+<span class="fc" data-hits="40">function messages.user_password_error()</span>
+<span class="nc">    return &quot;invalid username&#47;password!\n&quot;</span>
+end
+
+<span class="fc" data-hits="40">function messages.user_welcome(username)</span>
 <span class="nc">    return &quot;Welcome, &quot; .. username .. &quot; ;)\n&quot;</span>
 end
 
-<span class="fc" data-hits="313">function messages.user_prompt(username)</span>
-<span class="fc" data-hits="313">    return &quot;$ &quot; .. username .. &quot; # &quot;</span>
+<span class="fc" data-hits="40">function messages.user_prompt(username)</span>
+<span class="fc" data-hits="40">    return &quot;$ &quot; .. username .. &quot; # &quot;</span>
 end
 
-<span class="fc" data-hits="313">function messages.invalid_username(username)</span>
+<span class="fc" data-hits="40">function messages.invalid_username(username)</span>
 <span class="nc">    return &quot;unknown username *&quot; .. username .. &quot;*\n&quot;</span>
 end
 
-<span class="fc" data-hits="313">function messages.invalid_command(msg)</span>
+<span class="fc" data-hits="40">function messages.invalid_command(msg)</span>
 <span class="nc">    return &quot;invalid command! received message:&quot; .. msg .. &quot;\n&quot;</span>
 end
 
-<span class="fc" data-hits="313">function messages.user_logout(username)</span>
+<span class="fc" data-hits="40">function messages.user_logout(username)</span>
 <span class="nc">    return &quot;Goodbye &quot; .. username .. &quot; and see you soon ;)\n&quot;</span>
 end
 
-<span class="fc" data-hits="313">return messages</span>
+<span class="fc" data-hits="40">return messages</span>
 </pre>
       </div>
 
@@ -462,17 +490,17 @@ end
                <span class="miss"><strong>56</strong> Missed</span>
             </span>
          </h2>
-         <pre class="prettyprint lang-lua linenums"><span class="fc" data-hits="310">local socket = require(&quot;socket&quot;)</span>
+         <pre class="prettyprint lang-lua linenums"><span class="fc" data-hits="40">local socket = require(&quot;socket&quot;)</span>
 
-<span class="fc" data-hits="310">local client = require(&quot;chat.client&quot;)</span>
-<span class="fc" data-hits="310">local messages = require(&quot;chat.messages&quot;)</span>
+<span class="fc" data-hits="40">local client = require(&quot;chat.client&quot;)</span>
+<span class="fc" data-hits="40">local messages = require(&quot;chat.messages&quot;)</span>
 
-<span class="fc" data-hits="310">local server = {}</span>
-<span class="fc" data-hits="310">server.connections = {}</span>
+<span class="fc" data-hits="40">local server = {}</span>
+<span class="fc" data-hits="40">server.connections = {}</span>
 
-<span class="fc" data-hits="310">local users = {}</span>
+<span class="fc" data-hits="40">local users = {}</span>
 
-<span class="fc" data-hits="310">function server.start(address, port)</span>
+<span class="fc" data-hits="40">function server.start(address, port)</span>
     -- create and bind a TCP socket
 <span class="nc">    local tcp_server = assert(socket.bind(address, port))</span>
 
@@ -484,10 +512,10 @@ end
 <span class="nc">    return tcp_server</span>
 end
 
-<span class="fc" data-hits="310">function server.user_connection()</span>
+<span class="fc" data-hits="40">function server.user_connection()</span>
 <span class="nc">    local tcp_server = server.connections[1] -- hard-coded: cf. chat_server.start():table.insert server</span>
 <span class="nc">    local tcp_client = tcp_server:accept()</span>
-<span class="nc">    local user, error = client.login(tcp_client)</span>
+<span class="nc">    local user, error = client.login(tcp_client, users)</span>
 <span class="nc">    if not error then</span>
 <span class="nc">        table.insert(server.connections, tcp_client)</span>
 <span class="nc">        users[tcp_client] = user</span>
@@ -569,7 +597,7 @@ local function dispatch_action(user, msg)
     end
 end
 
-<span class="fc" data-hits="310">function server.user_input(tcp_client)</span>
+<span class="fc" data-hits="40">function server.user_input(tcp_client)</span>
 <span class="nc">    local msg, error = tcp_client:receive()</span>
 <span class="nc">    if not error then</span>
 <span class="nc">        local user = users[tcp_client]</span>
@@ -579,34 +607,81 @@ end
     end
 end
 
-<span class="fc" data-hits="310">return server</span>
+<span class="fc" data-hits="40">return server</span>
 </pre>
       </div>
 
-      <div class="hidden file success-high" id="src-chat-user">
+      <div class="hidden file danger" id="src-chat-user">
          <h2 class="title">
             src/chat/user.lua
             <span class="stats">
                <span class="cov">
-                  <span class="bg" style="width: 100.00%"></span>
-                  <span><strong>100.00%</strong> Coverage</span>
+                  <span class="bg" style="width: 25.81%"></span>
+                  <span><strong>25.81%</strong> Coverage</span>
                </span>
-               <span class="hits"><strong>4</strong> Hits</span>
-               <span class="miss"><strong>0</strong> Missed</span>
+               <span class="hits"><strong>8</strong> Hits</span>
+               <span class="miss"><strong>23</strong> Missed</span>
             </span>
          </h2>
-         <pre class="prettyprint lang-lua linenums"><span class="fc" data-hits="324">local user = {}</span>
+         <pre class="prettyprint lang-lua linenums"><span class="fc" data-hits="40">local sha1 = require(&quot;sha1&quot;)</span>
+<span class="fc" data-hits="40">local sqlite3 = require(&quot;lsqlite3&quot;)</span>
+
+<span class="fc" data-hits="40">local user = {}</span>
 
 ---Create a user record { username: string, tcp_client: socket.client }
 ---@alias socket.client socket.client: luasocket rock import
 ---@param username string
 ---@param tcp_client socket.client
 ---@return table: user table record { username: string, tcp_client: socket.client }
-<span class="fc" data-hits="324">function user.new(username, tcp_client)</span>
-<span class="fc" data-hits="320">    return { username = username, tcp_client = tcp_client }</span>
+<span class="fc" data-hits="40">function user.new(username, tcp_client)</span>
+<span class="fc" data-hits="40">    return { username = username, tcp_client = tcp_client }</span>
 end
 
-<span class="fc" data-hits="324">return user</span>
+local function is_valid_login_txt(username, pwd_sha1)
+<span class="nc">    for line in io.lines(_G.Users_file) do</span>
+<span class="nc">        local i1, _ = string.find(line, username .. &quot;:&quot;)</span>
+<span class="nc">        local i2, _ = string.find(line, &quot;:&quot; .. pwd_sha1)</span>
+<span class="nc">        if i1 ~= nil and i1 &gt; 0 and i2 ~= nil and i2 &gt; 0 then</span>
+<span class="nc">            return true</span>
+        end
+    end
+<span class="nc">    return false</span>
+end
+
+local function is_valid_login_db(username, pwd_sha1)
+<span class="nc">    local db = sqlite3.open(_G.Users_db)</span>
+    local query =
+<span class="nc">        &quot;SELECT * FROM users WHERE username=&#39;&quot; .. username ..</span>
+<span class="nc">        &quot;&#39; AND password=&#39;&quot; .. pwd_sha1 .. &quot;&#39;&quot;</span>
+<span class="nc">    for cuser in db:nrows(query) do</span>
+<span class="nc">        if cuser.username == username and cuser.password == pwd_sha1 then</span>
+<span class="nc">            db:close()</span>
+<span class="nc">            return true</span>
+        end
+    end
+<span class="nc">    db:close()</span>
+<span class="nc">    return false</span>
+end
+
+<span class="fc" data-hits="40">function user.is_valid_login(username, password)</span>
+<span class="nc">    local pwd_sha1 = sha1.sha1(password)</span>
+<span class="nc">    if _G.Data_mode == &quot;db&quot; then</span>
+<span class="nc">        return is_valid_login_db(username, pwd_sha1)</span>
+    else
+<span class="nc">        return is_valid_login_txt(username, pwd_sha1)</span>
+    end
+end
+
+<span class="fc" data-hits="40">function user.is_connected_user(users, username)</span>
+<span class="nc">    for _, cuser in pairs(users) do</span>
+<span class="nc">        if cuser.username == username then</span>
+<span class="nc">            return true</span>
+        end
+    end
+<span class="nc">    return false</span>
+end
+
+<span class="fc" data-hits="40">return user</span>
 </pre>
       </div>
 
@@ -629,55 +704,55 @@ Minimal factorial module
 --- Different factorial function implementation
 -- @module Lua_factorial
 
-<span class="fc" data-hits="1">local factorial = {}</span>
+<span class="fc" data-hits="40">local factorial = {}</span>
 
 --- module version 1.1
-<span class="fc" data-hits="1494">factorial._VERSION = &quot;1.1&quot;</span>
+<span class="fc" data-hits="40">factorial._VERSION = &quot;1.1&quot;</span>
 
 local function is_integer(n)
-<span class="fc" data-hits="9465">    return type(n) == &quot;number&quot; and math.floor(n) == n</span>
+<span class="fc" data-hits="3920">    return type(n) == &quot;number&quot; and math.floor(n) == n</span>
 end
 
 --- 1: Basic imperative version
 --- @function factorial.fact_imp
 -- @param int factorial number to compute
 -- @return factorial result
-<span class="fc" data-hits="14002">function factorial.fact_imp(n)</span>
-<span class="fc" data-hits="13039">    if not is_integer(n) then</span>
-<span class="fc" data-hits="1356">        error(&quot;factorial.fact_imp error: number must be an integer&quot;, 1)</span>
+<span class="fc" data-hits="40">function factorial.fact_imp(n)</span>
+<span class="fc" data-hits="880">    if not is_integer(n) then</span>
+<span class="fc" data-hits="80">        error(&quot;factorial.fact_imp error: number must be an integer&quot;, 1)</span>
         -- , 1 (default error level) -- 2 (up, for call information)
     end
-<span class="fc" data-hits="39">    assert(n &gt;= 0, &quot;number must be positive&quot;)</span>
-<span class="fc" data-hits="295">    local f = 1</span>
-<span class="fc" data-hits="705">    for i = 1, n do</span>
-<span class="fc" data-hits="3550">        f = f * i</span>
+<span class="fc" data-hits="360">    assert(n &gt;= 0, &quot;number must be positive&quot;)</span>
+<span class="fc" data-hits="320">    local f = 1</span>
+<span class="fc" data-hits="3360">    for i = 1, n do</span>
+<span class="fc" data-hits="3040">        f = f * i</span>
     end
-<span class="fc" data-hits="972">    return f</span>
+<span class="fc" data-hits="320">    return f</span>
 end
 
 --- 2: Standard recursive version
 --- @function factorial.fact_rec
 -- @param int factorial number to compute
 -- @return factorial result
-<span class="fc" data-hits="302">function factorial.fact_rec(n)</span>
-<span class="fc" data-hits="193">    if not is_integer(n) then</span>
+<span class="fc" data-hits="40">function factorial.fact_rec(n)</span>
+<span class="fc" data-hits="6960">    if not is_integer(n) then</span>
         -- an arror can be of all types
-<span class="fc" data-hits="42">        error({ func = &quot;factorial.fact_rec&quot;, msg = &quot;number must be an integer&quot; }, 2)</span>
+<span class="fc" data-hits="80">        error({ func = &quot;factorial.fact_rec&quot;, msg = &quot;number must be an integer&quot; }, 2)</span>
     end
-<span class="fc" data-hits="316">    assert(n &gt;= 0, &quot;number must be positive&quot;)</span>
-<span class="fc" data-hits="937">    if n &lt;= 0 then</span>
-<span class="fc" data-hits="142">        return 1</span>
+<span class="fc" data-hits="3400">    assert(n &gt;= 0, &quot;number must be positive&quot;)</span>
+<span class="fc" data-hits="3360">    if n &lt;= 0 then</span>
+<span class="fc" data-hits="320">        return 1</span>
     else
-<span class="fc" data-hits="1500">        return n * factorial.fact_rec(n - 1)</span>
+<span class="fc" data-hits="6080">        return n * factorial.fact_rec(n - 1)</span>
     end
 end
 
 local function Fact_continuation(f_cont, n)
     -- NB. no &#39;n&#39; validity checks here (same, see imp and rec version)
-<span class="fc" data-hits="251">    if n == 0 then</span>
-<span class="fc" data-hits="311">        return f_cont(1)</span>
+<span class="fc" data-hits="1680">    if n == 0 then</span>
+<span class="fc" data-hits="240">        return f_cont(1)</span>
     else
-<span class="fc" data-hits="79">        return Fact_continuation(function (x) return f_cont(n * x) end, n - 1)</span>
+<span class="fc" data-hits="2880">        return Fact_continuation(function (x) return f_cont(n * x) end, n - 1)</span>
     end
 end
 
@@ -685,16 +760,16 @@ end
 --- @function factorial.fact_cont
 -- @param int factorial number to compute
 -- @return factorial result
-<span class="fc" data-hits="1">function factorial.fact_cont(n)</span>
-<span class="fc" data-hits="28">    return Fact_continuation(function (x) return x end, n)</span>
+<span class="fc" data-hits="40">function factorial.fact_cont(n)</span>
+<span class="fc" data-hits="480">    return Fact_continuation(function (x) return x end, n)</span>
 end
 
 -- NB. idem, no &#39;n&#39; validity checks here (same, see imp and rec version)
 local function I_Gen()
-<span class="fc" data-hits="661">    local i = 0</span>
+<span class="fc" data-hits="200">    local i = 0</span>
     while true do
-<span class="fc" data-hits="137">        i = i + 1</span>
-<span class="fc" data-hits="57">        coroutine.yield(i)</span>
+<span class="fc" data-hits="1640">        i = i + 1</span>
+<span class="fc" data-hits="3080">        coroutine.yield(i)</span>
     end
 end
 
@@ -702,23 +777,23 @@ end
 --- @function factorial.fact_co
 -- @param int factorial number to compute
 -- @return factorial result
-<span class="fc" data-hits="1">function factorial.fact_co(n)</span>
-<span class="fc" data-hits="6">    local i_gen = coroutine.create(I_Gen)</span>
-<span class="fc" data-hits="6">    local status, i, f = true, 1, 1</span>
-<span class="fc" data-hits="47">    while status and i &lt;= n do</span>
-<span class="fc" data-hits="41">        f = f * i</span>
-<span class="fc" data-hits="41">        status, i = coroutine.resume(i_gen)</span>
+<span class="fc" data-hits="40">function factorial.fact_co(n)</span>
+<span class="fc" data-hits="240">    local i_gen = coroutine.create(I_Gen)</span>
+<span class="fc" data-hits="240">    local status, i, f = true, 1, 1</span>
+<span class="fc" data-hits="1880">    while status and i &lt;= n do</span>
+<span class="fc" data-hits="1640">        f = f * i</span>
+<span class="fc" data-hits="1640">        status, i = coroutine.resume(i_gen)</span>
     end
-<span class="fc" data-hits="6">    return f</span>
+<span class="fc" data-hits="240">    return f</span>
 end
 
-<span class="fc" data-hits="1">return factorial</span>
+<span class="fc" data-hits="40">return factorial</span>
 </pre>
       </div>
 
    </main>
    <footer>
-        Code coverage generated by <a href="https://lunarmodules.github.io/luacov/" target="_blank">LuaCov</a> at 2026-07-24 11:27:40
+        Code coverage generated by <a href="https://lunarmodules.github.io/luacov/" target="_blank">LuaCov</a> at 2026-09-29 18:02:04
    </footer>
 
    <script type="text/javascript">

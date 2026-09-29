@@ -1,0 +1,18 @@
+require "busted.runner" ()
+
+require("fibonacci")
+local fibo = require("fibonacci_c")
+
+describe("fibonacci tests with busted framework", function ()
+    it("Hybrid: cross-calls from cfibo.fibo_h", function ()
+        assert.are.equal(fibo.fibo_h(10), 55)
+        assert.are.equal(fibo.fibo_h(15), 610)
+    end)
+    it("Hybrid: cross-calls from global Fibo_h", function ()
+        assert.are.equal(Fibo_h(10), 55)
+        assert.are.equal(Fibo_h(15), 610)
+    end)
+    it("Hybrid: cross-calls from cfibo.fibo_h and Fibo_h", function ()
+        assert.are.equal(fibo.fibo_h(8), Fibo_h(8))
+    end)
+end)

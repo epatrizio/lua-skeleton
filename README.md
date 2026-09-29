@@ -38,6 +38,16 @@ local factorial_c = require("factorial_c")
 local linked_list = require("linked_list")
 ```
 
+* `src/fibonacci.c` `src/fibonacci.lua`: C Lua fibonacci module and Lua fibonacci global function.\
+This is a fun hybrid cross-calls Lua Fibo_h <> cfibo.fibo_h recursive call.
+Nb. In Lua, Fibo_h function must be global in order to be called from C code via Lua C API.\
+(idem, see build.modules section in .rockspec)
+
+```lua
+require("fibonacci")
+local fibo = require("fibonacci_c")
+```
+
 * `ext/c/main.c`: Lua embedded in a C program (see Makefile `ext_c_build` and `ext_c_run` rules)
 * `ext/ocaml/`: Lua embedded in an OCaml program with [Lua bindings](https://github.com/pdonadeo/ocaml-lua)
 (see Makefile `ext_ocaml_build` and `ext_ocaml_run` rules)
