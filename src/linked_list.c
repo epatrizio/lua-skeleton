@@ -4,6 +4,12 @@
 #include "lua.h"
 #include "lauxlib.h"
 
+/***
+Linked list implementation
+Custom data structure with pointer manipulation experimentation
+@module C_linked_list
+*/
+
 typedef struct node
 {
     int value;
